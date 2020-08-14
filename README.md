@@ -1,4 +1,4 @@
-# url-shortener-node-express-mongo
+# URL Shrinker
 
 A simple URL shortener built using
 
