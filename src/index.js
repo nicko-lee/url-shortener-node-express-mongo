@@ -35,6 +35,29 @@ app.get("/test", (req, res) => {
   res.send("Hello World");
 });
 
+// what this is saying is get me any route that has information directly after the /
+// and it will be saved in a param called shortUrl
+app.get("/:shortUrl", async (req, res) => {
+  // call the findOne method on our Mongo DB and pass in our search query
+  // we are trying to find an entry in the DB that has that shortId which is passed in from our URL
+  const shortUrl = await ShortUrl.findOne({ short: req.params.shortUrl });
+
+  // check in case people pass a URL that doesn't exist in our DB and handle this
+  if (shortUrl == null) return res.sendStatus(404); // we can't find what ur looking for
+
+  shortUrl.clicks++; // update clicks on our local object
+  shortUrl.save(); // update the DB with the latest clicks
+
+  res.redirect(shortUrl.full);
+
+  // so logic is
+  // client passes in a shortUrl
+  // we check if it exists in our DB, if not send a 404
+  // if yes we add one to clicks locally
+  // then save to DB
+  // then redirect to the full URL
+});
+
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => console.log("Listening on port ", PORT));
